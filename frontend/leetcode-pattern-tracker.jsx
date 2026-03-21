@@ -254,6 +254,12 @@ export default function LeetCodeTracker() {
   const [sortField, setSortField] = useState("date");
   const [sortDir, setSortDir] = useState("desc");
   const [filterPattern, setFilterPattern] = useState("all");
+  const [toast, setToast] = useState(null);
+
+  const showToast = useCallback((message) => {
+    setToast(message);
+    setTimeout(() => setToast(null), 2500);
+  }, []);
 
   useEffect(() => {
     loadData().then(d => {
@@ -325,11 +331,23 @@ export default function LeetCodeTracker() {
 
       <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px" }}>
         {view === "dashboard" && <Dashboard stats={stats} data={data} setView={setView} />}
-        {view === "add" && <AddProblem data={data} persist={persist} editingId={editingId} setEditingId={setEditingId} setView={setView} />}
+        {view === "add" && <AddProblem data={data} persist={persist} editingId={editingId} setEditingId={setEditingId} setView={setView} showToast={showToast} />}
         {view === "review" && <ReviewQueue data={data} persist={persist} stats={stats} />}
         {view === "patterns" && <PatternView stats={stats} data={data} persist={persist} />}
         {view === "all" && <AllProblems data={data} persist={persist} setView={setView} setEditingId={setEditingId} sortField={sortField} setSortField={setSortField} sortDir={sortDir} setSortDir={setSortDir} filterPattern={filterPattern} setFilterPattern={setFilterPattern} />}
       </div>
+      {toast && (
+        <div style={{
+          position: "fixed", bottom: 24, right: 24,
+          background: "#2d6a4f", color: "#d8f3dc",
+          padding: "12px 20px", borderRadius: 8,
+          fontSize: 13, fontWeight: 500,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+          zIndex: 1000,
+        }}>
+          ✓ {toast}
+        </div>
+      )}
     </div>
   );
 }
@@ -477,7 +495,7 @@ function Dashboard({ stats, data, setView }) {
   );
 }
 
-function AddProblem({ data, persist, editingId, setEditingId, setView }) {
+function AddProblem({ data, persist, editingId, setEditingId, setView, showToast }) {
   const existing = editingId ? data.problems.find(p => p.id === editingId) : null;
   const [name, setName] = useState(existing?.name || "");
   const [link, setLink] = useState(existing?.link || "");
@@ -536,6 +554,7 @@ function AddProblem({ data, persist, editingId, setEditingId, setView }) {
       newProblems = [...data.problems, problem];
     }
     persist({ ...data, problems: newProblems });
+    showToast(existing ? "Problem updated" : "Problem saved");
 
     // Reset
     setName(""); setLink(""); setPattern(PATTERNS[0]); setRating(2);
