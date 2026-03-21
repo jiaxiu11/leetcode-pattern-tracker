@@ -960,6 +960,7 @@ function AllProblems({ data, persist, setView, setEditingId, sortField, setSortF
                       </span>
                     </div>
                     {p.patternNote && <div style={{ fontSize: 11, color: "#64748b", marginTop: 4, fontStyle: "italic" }}>{p.patternNote}</div>}
+                    {p.insight && <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>💡 {p.insight}</div>}
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 12 }}>
                     <span style={{
