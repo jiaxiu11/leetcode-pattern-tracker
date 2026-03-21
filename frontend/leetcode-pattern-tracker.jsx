@@ -338,7 +338,7 @@ export default function LeetCodeTracker() {
       </div>
       {toast && (
         <div style={{
-          position: "fixed", bottom: 24, right: 24,
+          position: "fixed", top: 24, left: "50%", transform: "translateX(-50%)",
           background: "#2d6a4f", color: "#d8f3dc",
           padding: "12px 20px", borderRadius: 8,
           fontSize: 13, fontWeight: 500,
