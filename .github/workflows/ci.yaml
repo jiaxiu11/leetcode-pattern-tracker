@@ -6,6 +6,7 @@ on:
     paths:
       - 'frontend/**'
       - 'backend/**'
+  workflow_dispatch:
 
 jobs:
   build:
