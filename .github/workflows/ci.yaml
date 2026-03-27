@@ -29,7 +29,6 @@ jobs:
         run: echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Build and push frontend
-        if: contains(toJson(github.event.commits.*.modified + github.event.commits.*.added), 'frontend/')
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
@@ -37,7 +36,6 @@ jobs:
           tags: ghcr.io/jiaxiu11/leetcode-pattern-tracker/frontend:${{ steps.tag.outputs.sha }}
 
       - name: Build and push backend
-        if: contains(toJson(github.event.commits.*.modified + github.event.commits.*.added), 'backend/')
         uses: docker/build-push-action@v5
         with:
           context: ./backend
