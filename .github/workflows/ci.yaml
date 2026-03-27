@@ -9,7 +9,24 @@ on:
   workflow_dispatch:
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+            backend:
+              - 'backend/**'
+
   build:
+    needs: changes
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -30,6 +47,7 @@ jobs:
         run: echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Build and push frontend
+        if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
@@ -37,6 +55,7 @@ jobs:
           tags: ghcr.io/jiaxiu11/leetcode-pattern-tracker/frontend:${{ steps.tag.outputs.sha }}
 
       - name: Build and push backend
+        if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
         uses: docker/build-push-action@v5
         with:
           context: ./backend
@@ -45,8 +64,12 @@ jobs:
 
       - name: Update k8s image tags
         run: |
-          sed -i "s|ghcr.io/jiaxiu11/leetcode-pattern-tracker/frontend:.*|ghcr.io/jiaxiu11/leetcode-pattern-tracker/frontend:${{ steps.tag.outputs.sha }}|" k8s/frontend/deployment.yaml
-          sed -i "s|ghcr.io/jiaxiu11/leetcode-pattern-tracker/backend:.*|ghcr.io/jiaxiu11/leetcode-pattern-tracker/backend:${{ steps.tag.outputs.sha }}|" k8s/backend/deployment.yaml
+          if [ "${{ needs.changes.outputs.frontend }}" == "true" ] || [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            sed -i "s|ghcr.io/jiaxiu11/leetcode-pattern-tracker/frontend:.*|ghcr.io/jiaxiu11/leetcode-pattern-tracker/frontend:${{ steps.tag.outputs.sha }}|" k8s/frontend/deployment.yaml
+          fi
+          if [ "${{ needs.changes.outputs.backend }}" == "true" ] || [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            sed -i "s|ghcr.io/jiaxiu11/leetcode-pattern-tracker/backend:.*|ghcr.io/jiaxiu11/leetcode-pattern-tracker/backend:${{ steps.tag.outputs.sha }}|" k8s/backend/deployment.yaml
+          fi
 
       - name: Commit manifest updates
         run: |
