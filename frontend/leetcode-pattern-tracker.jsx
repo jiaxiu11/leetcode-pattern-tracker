@@ -506,6 +506,33 @@ function AddProblem({ data, persist, editingId, setEditingId, setView, showToast
   const [insight, setInsight] = useState(existing?.insight || "");
   const [difficulty, setDifficulty] = useState(existing?.difficulty || "Medium");
   const [autoFilled, setAutoFilled] = useState(false);
+  const [timerPhase, setTimerPhase] = useState(existing ? "done" : "idle"); // idle | running | done
+  const [timerStart, setTimerStart] = useState(null);
+  const [elapsed, setElapsed] = useState(0); // seconds
+
+  useEffect(() => {
+    if (timerPhase !== "running") return;
+    const id = setInterval(() => setElapsed(Math.floor((Date.now() - timerStart) / 1000)), 1000);
+    return () => clearInterval(id);
+  }, [timerPhase, timerStart]);
+
+  function fmtElapsed(s) {
+    const m = String(Math.floor(s / 60)).padStart(2, "0");
+    const sec = String(s % 60).padStart(2, "0");
+    return `${m}:${sec}`;
+  }
+
+  function handleStartTimer() {
+    const now = Date.now();
+    setTimerStart(now);
+    setElapsed(0);
+    setTimerPhase("running");
+  }
+
+  function handleDone() {
+    setTime(Math.max(1, Math.round(elapsed / 60)));
+    setTimerPhase("done");
+  }
 
   function handleLinkChange(url) {
     setLink(url);
@@ -568,6 +595,79 @@ function AddProblem({ data, persist, editingId, setEditingId, setView, showToast
     borderRadius: 6, color: "#e2e8f0", fontSize: 13, fontFamily: "inherit",
   };
   const labelStyle = { fontSize: 11, color: "#64748b", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, display: "block" };
+
+  // Idle phase: URL input + start timer
+  if (timerPhase === "idle") {
+    return (
+      <div style={{ maxWidth: 640, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: "#e2e8f0", marginBottom: 20 }}>Start Session</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div>
+            <label style={labelStyle}>NeetCode / LeetCode Link</label>
+            <input
+              value={link}
+              onChange={e => handleLinkChange(e.target.value)}
+              placeholder="Paste neetcode.io or leetcode.com URL"
+              style={{ ...inputStyle, borderColor: autoFilled ? "#2d6a4f" : "#1e293b" }}
+              autoFocus
+            />
+            {autoFilled && (
+              <div style={{ fontSize: 11, color: "#2d6a4f", marginTop: 4 }}>✓ Auto-filled from NeetCode 150</div>
+            )}
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <button onClick={handleStartTimer} disabled={!link.trim()} style={{
+              padding: "11px 24px", background: "#3b82f6", color: "#fff", border: "none",
+              borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: link.trim() ? "pointer" : "not-allowed",
+              fontFamily: "inherit", opacity: link.trim() ? 1 : 0.4, transition: "opacity 0.15s",
+            }}>
+              Start Timer
+            </button>
+            <button onClick={() => setTimerPhase("done")} style={{
+              padding: "11px 16px", background: "transparent", color: "#64748b",
+              border: "1px solid #1e293b", borderRadius: 6, fontSize: 13, cursor: "pointer", fontFamily: "inherit",
+            }}>
+              Skip
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Running phase: live timer card + done button
+  if (timerPhase === "running") {
+    return (
+      <div style={{ maxWidth: 640, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: "#e2e8f0", marginBottom: 20 }}>In Progress</h2>
+        <div style={{
+          background: "#0d1320", border: "1px solid #1e293b", borderRadius: 10, padding: "28px 24px",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
+        }}>
+          {name && (
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 600, color: "#e2e8f0" }}>{name}</div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>{pattern} · {difficulty}</div>
+            </div>
+          )}
+          <div style={{ fontSize: 48, fontWeight: 700, color: "#3b82f6", letterSpacing: 2, fontVariantNumeric: "tabular-nums" }}>
+            {fmtElapsed(elapsed)}
+          </div>
+          <button onClick={handleDone} style={{
+            padding: "12px 32px", background: "#2d6a4f", color: "#d8f3dc", border: "none",
+            borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+          }}>
+            Done Solving
+          </button>
+          <button onClick={() => setTimerPhase("idle")} style={{
+            background: "none", border: "none", color: "#475569", fontSize: 12, cursor: "pointer", fontFamily: "inherit",
+          }}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: 640, margin: "0 auto" }}>
