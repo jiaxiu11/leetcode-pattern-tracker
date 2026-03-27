@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/jiaxiu11/leetcode-pattern-tracker/backend:latest
+          image: ghcr.io/jiaxiu11/leetcode-pattern-tracker/backend:971bbe5
           env:
             - name: DATABASE_URL
               valueFrom:
