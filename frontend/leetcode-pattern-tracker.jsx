@@ -586,6 +586,7 @@ function AddProblem({ data, persist, editingId, setEditingId, setView, showToast
     // Reset
     setName(""); setLink(""); setPattern(PATTERNS[0]); setRating(2);
     setTime(""); setPatternNote(""); setInsight(""); setDifficulty("Medium");
+    setAutoFilled(false); setTimerPhase("idle"); setElapsed(0); setTimerStart(null);
     setEditingId(null);
     if (existing) setView("all");
   }
