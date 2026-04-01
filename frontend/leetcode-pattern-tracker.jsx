@@ -662,6 +662,7 @@ function AddProblem({ data, persist, editingId, setEditingId, setView, showToast
   const [timerPhase, setTimerPhase] = useState(existing ? "done" : "idle"); // idle | running | done
   const [timerStart, setTimerStart] = useState(null);
   const [elapsed, setElapsed] = useState(0); // seconds
+  const [celebrate, setCelebrate] = useState(false);
 
   useEffect(() => {
     if (timerPhase !== "running") return;
@@ -734,14 +735,23 @@ function AddProblem({ data, persist, editingId, setEditingId, setView, showToast
       newProblems = [...data.problems, problem];
     }
     persist({ ...data, problems: newProblems });
-    showToast(existing ? "Problem updated" : "Problem saved");
 
-    // Reset
-    setName(""); setLink(""); setPattern(PATTERNS[0]); setRating(2);
-    setTime(""); setPatternNote(""); setInsight(""); setDifficulty("Medium");
-    setAutoFilled(false); setTimerPhase("idle"); setElapsed(0); setTimerStart(null);
-    setEditingId(null);
-    if (existing) setView("all");
+    if (existing) {
+      showToast("Problem updated");
+      setName(""); setLink(""); setPattern(PATTERNS[0]); setRating(2);
+      setTime(""); setPatternNote(""); setInsight(""); setDifficulty("Medium");
+      setAutoFilled(false); setTimerPhase("idle"); setElapsed(0); setTimerStart(null);
+      setEditingId(null);
+      setView("all");
+    } else {
+      setCelebrate(true);
+      setTimeout(() => {
+        setName(""); setLink(""); setPattern(PATTERNS[0]); setRating(2);
+        setTime(""); setPatternNote(""); setInsight(""); setDifficulty("Medium");
+        setAutoFilled(false); setTimerPhase("idle"); setElapsed(0); setTimerStart(null);
+        setCelebrate(false);
+      }, 2000);
+    }
   }
 
   const inputStyle = {
@@ -749,6 +759,27 @@ function AddProblem({ data, persist, editingId, setEditingId, setView, showToast
     borderRadius: 6, color: "#e2e8f0", fontSize: 13, fontFamily: "inherit",
   };
   const labelStyle = { fontSize: 11, color: "#64748b", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, display: "block" };
+
+  if (celebrate) {
+    return (
+      <div style={{ maxWidth: 640, margin: "0 auto" }}>
+        <div style={{
+          background: "#0d1320", border: "1px solid #2d6a4f", borderRadius: 10,
+          padding: "40px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: 20,
+        }}>
+          <div style={{ fontSize: 13, color: "#22c55e", textTransform: "uppercase", letterSpacing: 1 }}>Problem saved</div>
+          <div style={{ background: "#1e293b", border: "1px solid #2d6a4f", borderRadius: 8, padding: "6px 16px", fontSize: 12, color: "#86efac", position: "relative", whiteSpace: "nowrap" }}>
+            nom nom nom 🍖 fed!
+            <div style={{ position: "absolute", bottom: -6, left: "50%", transform: "translateX(-50%)", borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "6px solid #2d6a4f" }} />
+          </div>
+          <DinoPixel grid={DINO_GRIDS.happy} colors={DINO_COLORS.base} />
+          <div style={{ fontSize: 13, color: "#64748b" }}>
+            <span style={{ color: "#e2e8f0", fontWeight: 600 }}>{name}</span> added
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Idle phase: URL input + start timer
   if (timerPhase === "idle") {
@@ -926,6 +957,28 @@ function ReviewQueue({ data, persist, stats }) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [celebrateProblem, setCelebrateProblem] = useState(null);
+
+  if (celebrateProblem) {
+    return (
+      <div style={{ maxWidth: 640, margin: "0 auto" }}>
+        <div style={{
+          background: "#0d1320", border: "1px solid #1e3a5f", borderRadius: 10,
+          padding: "40px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: 20,
+        }}>
+          <div style={{ fontSize: 13, color: "#60a5fa", textTransform: "uppercase", letterSpacing: 1 }}>Review complete</div>
+          <div style={{ background: "#1e293b", border: "1px solid #1e3a5f", borderRadius: 8, padding: "6px 16px", fontSize: 12, color: "#93c5fd", position: "relative", whiteSpace: "nowrap" }}>
+            squeaky clean 🚿
+            <div style={{ position: "absolute", bottom: -6, left: "50%", transform: "translateX(-50%)", borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "6px solid #1e3a5f" }} />
+          </div>
+          <DinoPixel grid={DINO_GRIDS.happy} colors={DINO_COLORS.base} />
+          <div style={{ fontSize: 13, color: "#64748b" }}>
+            <span style={{ color: "#e2e8f0", fontWeight: 600 }}>{celebrateProblem}</span> reviewed
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (due.length === 0) {
     return (
@@ -968,8 +1021,12 @@ function ReviewQueue({ data, persist, stats }) {
     };
     const newProblems = data.problems.map(p => p.id === current.id ? updated : p);
     persist({ ...data, problems: newProblems });
-    setShowDetails(false);
-    setCurrentIdx(i => i + 1);
+    setCelebrateProblem(current.name);
+    setTimeout(() => {
+      setShowDetails(false);
+      setCurrentIdx(i => i + 1);
+      setCelebrateProblem(null);
+    }, 2000);
   }
 
   const daysOverdue = daysBetween(current.nextReview, today());
