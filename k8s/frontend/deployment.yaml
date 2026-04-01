@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/jiaxiu11/leetcode-pattern-tracker/frontend:811d31d
+          image: ghcr.io/jiaxiu11/leetcode-pattern-tracker/frontend:0f669d3
           ports:
             - containerPort: 80
           readinessProbe:
