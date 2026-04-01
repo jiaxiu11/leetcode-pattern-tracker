@@ -819,6 +819,13 @@ function ReviewQueue({ data, persist, stats }) {
   }
 
   const daysOverdue = daysBetween(current.nextReview, today());
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    navigator.clipboard.writeText(current.link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
 
   return (
     <div style={{ maxWidth: 640, margin: "0 auto" }}>
@@ -850,8 +857,15 @@ function ReviewQueue({ data, persist, stats }) {
         </div>
 
         {current.link && (
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
             <span style={{ fontSize: 12, color: "#3b82f6", wordBreak: "break-all" }}>{current.link}</span>
+            <button onClick={handleCopy} style={{
+              flexShrink: 0, padding: "3px 10px", background: copied ? "#2d6a4f" : "#1e293b",
+              color: copied ? "#d8f3dc" : "#94a3b8", border: "none", borderRadius: 4,
+              fontSize: 11, cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
+            }}>
+              {copied ? "Copied!" : "Copy"}
+            </button>
           </div>
         )}
 
