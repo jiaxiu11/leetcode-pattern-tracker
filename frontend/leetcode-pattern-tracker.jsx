@@ -772,6 +772,7 @@ function ReviewQueue({ data, persist, stats }) {
   const due = stats.dueForReview.sort((a, b) => a.nextReview > b.nextReview ? 1 : -1);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   if (due.length === 0) {
     return (
@@ -819,7 +820,6 @@ function ReviewQueue({ data, persist, stats }) {
   }
 
   const daysOverdue = daysBetween(current.nextReview, today());
-  const [copied, setCopied] = useState(false);
 
   function handleCopy() {
     navigator.clipboard.writeText(current.link);
