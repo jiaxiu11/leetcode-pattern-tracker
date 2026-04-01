@@ -412,6 +412,157 @@ function StatCard({ label, value, sub, accent }) {
   );
 }
 
+// ── Dino pet ──────────────────────────────────────────────────────────────
+const DINO_GRIDS = {
+  happy: [
+    [0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+    [0,0,0,0,0,0,1,1,1,1,1,1,0,0],
+    [0,0,0,0,0,0,1,2,1,1,1,1,1,0],
+    [0,0,0,0,0,0,1,1,1,1,1,1,1,1],
+    [0,0,0,0,0,0,0,0,0,4,4,4,0,0],
+    [0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+    [0,0,0,0,0,1,1,1,1,1,0,0,0,0],
+    [0,0,1,1,1,1,1,1,1,0,0,0,0,0],
+    [0,1,3,3,3,3,1,1,1,1,0,0,0,0],
+    [1,1,3,3,3,3,1,0,1,1,0,0,0,0],
+    [0,1,1,1,1,1,1,0,0,0,0,0,0,0],
+    [0,0,0,1,1,0,1,1,0,0,0,0,0,0],
+    [0,0,0,1,1,0,1,1,0,0,0,0,0,0],
+    [0,0,0,1,1,0,0,1,0,0,0,0,0,0],
+  ],
+  hungry: [
+    [0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+    [0,0,0,0,0,0,1,1,1,1,1,1,0,0],
+    [0,0,0,0,0,0,1,2,1,1,1,1,1,0],
+    [0,0,0,0,0,0,1,1,1,1,1,1,1,1],
+    [0,0,0,0,0,0,4,4,1,1,1,0,0,0],
+    [0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+    [0,0,0,0,0,1,1,1,1,1,0,0,0,0],
+    [0,0,1,1,1,1,1,1,1,0,0,0,0,0],
+    [0,1,3,3,3,3,1,1,1,1,0,0,0,0],
+    [1,1,3,3,3,3,1,0,1,1,0,0,0,0],
+    [0,1,1,1,1,1,1,0,0,0,0,0,0,0],
+    [0,0,0,1,1,0,1,1,0,0,0,0,0,0],
+    [0,0,0,1,1,0,1,1,0,0,0,0,0,0],
+    [0,0,0,1,1,0,0,1,0,0,0,0,0,0],
+  ],
+  itchy: [
+    [0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+    [0,0,0,0,0,0,1,1,1,1,1,1,0,0],
+    [0,0,0,0,0,0,1,2,1,1,1,1,1,0],
+    [0,0,0,0,0,0,1,1,1,1,1,1,1,1],
+    [0,0,0,0,0,0,0,0,0,4,4,4,0,0],
+    [0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+    [0,0,0,0,0,1,1,1,1,1,1,1,5,0],
+    [0,0,1,1,1,1,1,1,1,0,1,0,0,0],
+    [0,1,3,3,3,3,1,1,0,0,0,0,0,0],
+    [1,1,3,3,3,3,1,1,0,0,0,0,0,0],
+    [0,1,1,1,1,1,1,0,0,0,0,0,0,0],
+    [0,0,0,1,1,0,1,1,0,0,0,0,0,0],
+    [0,0,0,1,1,0,0,1,0,0,0,0,0,0],
+    [0,0,0,0,1,0,1,0,0,0,0,0,0,0],
+  ],
+  sad: [
+    [0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+    [0,0,0,0,0,0,1,1,1,1,1,1,0,0],
+    [0,0,0,0,0,0,1,2,1,1,1,1,1,0],
+    [0,0,0,0,0,0,1,1,1,1,1,1,1,1],
+    [0,0,0,0,0,0,4,4,1,1,1,0,0,0],
+    [0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+    [0,0,0,0,0,1,1,1,1,1,0,0,0,0],
+    [0,0,1,1,1,1,1,1,1,0,0,0,0,0],
+    [0,1,3,3,3,3,1,1,0,0,0,0,0,0],
+    [1,1,3,3,3,3,1,1,1,0,0,0,0,0],
+    [0,1,1,1,1,1,1,0,1,5,0,0,0,0],
+    [0,0,0,0,1,0,1,0,0,0,0,0,0,0],
+    [0,0,0,0,1,0,1,0,0,0,0,0,0,0],
+    [0,0,0,1,1,0,1,1,0,0,0,0,0,0],
+  ],
+};
+
+const DINO_COLORS = {
+  base:   { 0:"transparent", 1:"#4ade80", 2:"#0a0f1a", 3:"#86efac", 4:"#166534", 5:"#60a5fa" },
+  hungry: { 0:"transparent", 1:"#a3e635", 2:"#0a0f1a", 3:"#bef264", 4:"#166534", 5:"#60a5fa" },
+  sad:    { 0:"transparent", 1:"#94a3b8", 2:"#0a0f1a", 3:"#cbd5e1", 4:"#475569", 5:"#60a5fa" },
+};
+
+function DinoPixel({ grid, colors }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${grid[0].length}, 11px)`, gap: 1 }}>
+      {grid.flat().map((val, i) => (
+        <div key={i} style={{ width: 11, height: 11, borderRadius: 1, background: colors[val] || "transparent" }} />
+      ))}
+    </div>
+  );
+}
+
+function DinoCard({ data, stats }) {
+  const todayStr = today();
+  const lastAdded = data.problems.length > 0
+    ? data.problems.reduce((latest, p) => p.date > latest ? p.date : latest, "")
+    : null;
+  const hungerDays = lastAdded ? daysBetween(lastAdded, todayStr) : 99;
+  const dueCount = stats.dueForReview.length;
+
+  const isHungry = hungerDays >= 2;
+  const isItchy = dueCount >= 3;
+  let state = "happy";
+  if (isHungry && isItchy) state = "sad";
+  else if (isHungry) state = "hungry";
+  else if (isItchy) state = "itchy";
+
+  const hungerPct = Math.max(0, 100 - hungerDays * 25);
+  const cleanPct  = Math.max(0, 100 - dueCount * 12);
+  const barColor  = pct => pct > 60 ? "#22c55e" : pct > 30 ? "#eab308" : "#ef4444";
+
+  const hungerLabel = hungerDays === 0 ? "full" : hungerDays === 1 ? "peckish" : hungerDays === 2 ? "hungry" : "starving";
+  const cleanLabel  = dueCount === 0 ? "squeaky clean" : dueCount <= 2 ? "slightly itchy" : dueCount <= 5 ? "itchy" : "very itchy";
+
+  const speech = {
+    happy:  "all good!",
+    hungry: `haven't eaten in ${hungerDays}d...`,
+    itchy:  `${dueCount} reviews overdue... itchy`,
+    sad:    "feed me and shower me please",
+  }[state];
+
+  const palette = state === "hungry" ? DINO_COLORS.hungry : state === "sad" ? DINO_COLORS.sad : DINO_COLORS.base;
+
+  return (
+    <div style={{ background: "#0d1320", border: "1px solid #1e293b", borderRadius: 8, padding: 20, marginBottom: 24 }}>
+      <div style={{ fontSize: 11, color: "#64748b", textTransform: "uppercase", letterSpacing: 1, marginBottom: 16 }}>Pet</div>
+      <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          <div style={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, padding: "5px 10px", fontSize: 11, color: "#94a3b8", position: "relative", whiteSpace: "nowrap" }}>
+            {speech}
+            <div style={{ position: "absolute", bottom: -6, left: "50%", transform: "translateX(-50%)", borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "6px solid #334155" }} />
+          </div>
+          <DinoPixel grid={DINO_GRIDS[state]} colors={palette} />
+        </div>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 14 }}>
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#64748b", marginBottom: 5 }}>
+              <span>Hunger</span><span style={{ color: barColor(hungerPct) }}>{hungerLabel}</span>
+            </div>
+            <div style={{ height: 5, background: "#1e293b", borderRadius: 3, overflow: "hidden" }}>
+              <div style={{ width: `${hungerPct}%`, height: "100%", background: barColor(hungerPct), borderRadius: 3, transition: "width 0.5s" }} />
+            </div>
+            <div style={{ fontSize: 10, color: "#334155", marginTop: 4 }}>solve new problems to feed</div>
+          </div>
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#64748b", marginBottom: 5 }}>
+              <span>Cleanliness</span><span style={{ color: barColor(cleanPct) }}>{cleanLabel}</span>
+            </div>
+            <div style={{ height: 5, background: "#1e293b", borderRadius: 3, overflow: "hidden" }}>
+              <div style={{ width: `${cleanPct}%`, height: "100%", background: barColor(cleanPct), borderRadius: 3, transition: "width 0.5s" }} />
+            </div>
+            <div style={{ fontSize: 10, color: "#334155", marginTop: 4 }}>clear review queue to shower</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Dashboard({ stats, data, setView }) {
   const todayStr = today();
   const recent = data.problems.slice().sort((a, b) => b.date > a.date ? 1 : -1).slice(0, 5);
@@ -426,6 +577,8 @@ function Dashboard({ stats, data, setView }) {
         <StatCard label="Patterns Confident" value={`${stats.confidentPatterns}/16`} sub="3+ problems at rating 3" accent="#a855f7" />
         <StatCard label="Avg Time" value={stats.avgTime > 0 ? `${stats.avgTime}m` : "—"} sub="Minutes per problem" />
       </div>
+
+      <DinoCard data={data} stats={stats} />
 
       {/* Rating distribution */}
       {stats.totalSolved > 0 && (
