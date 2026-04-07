@@ -955,6 +955,7 @@ function AddProblem({ data, persist, editingId, setEditingId, setView, showToast
 function ReviewQueue({ data, persist, stats }) {
   const due = stats.dueForReview.sort((a, b) => a.nextReview > b.nextReview ? 1 : -1);
   const [currentIdx, setCurrentIdx] = useState(0);
+  const [totalDue] = useState(due.length);
   const [showDetails, setShowDetails] = useState(false);
   const [copied, setCopied] = useState(false);
   const [celebrateProblem, setCelebrateProblem] = useState(null);
@@ -990,13 +991,13 @@ function ReviewQueue({ data, persist, stats }) {
     );
   }
 
-  const current = due[currentIdx];
+  const current = due[0];
   if (!current) {
     return (
       <div style={{ textAlign: "center", padding: "60px 20px", color: "#22c55e" }}>
         <div style={{ fontSize: 32, marginBottom: 12 }}>✓</div>
         <div style={{ fontSize: 14 }}>Review session complete!</div>
-        <div style={{ fontSize: 12, marginTop: 8, color: "#475569" }}>Reviewed {due.length} problem{due.length > 1 ? "s" : ""}</div>
+        <div style={{ fontSize: 12, marginTop: 8, color: "#475569" }}>Reviewed {totalDue} problem{totalDue > 1 ? "s" : ""}</div>
       </div>
     );
   }
@@ -1041,10 +1042,10 @@ function ReviewQueue({ data, persist, stats }) {
     <div style={{ maxWidth: 640, margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <span style={{ fontSize: 12, color: "#64748b" }}>
-          Reviewing {currentIdx + 1} of {due.length}
+          Reviewing {currentIdx + 1} of {totalDue}
         </span>
         <div style={{ height: 4, flex: 1, background: "#1e293b", borderRadius: 2, margin: "0 16px", overflow: "hidden" }}>
-          <div style={{ width: `${((currentIdx) / due.length) * 100}%`, height: "100%", background: "#3b82f6", borderRadius: 2, transition: "width 0.3s" }} />
+          <div style={{ width: `${(currentIdx / totalDue) * 100}%`, height: "100%", background: "#3b82f6", borderRadius: 2, transition: "width 0.3s" }} />
         </div>
       </div>
 
