@@ -953,7 +953,10 @@ function AddProblem({ data, persist, editingId, setEditingId, setView, showToast
 }
 
 function ReviewQueue({ data, persist, stats }) {
-  const due = stats.dueForReview.sort((a, b) => a.nextReview > b.nextReview ? 1 : -1);
+  const due = useMemo(
+    () => [...stats.dueForReview].sort((a, b) => a.nextReview < b.nextReview ? -1 : a.nextReview > b.nextReview ? 1 : 0),
+    [stats.dueForReview]
+  );
   const [currentIdx, setCurrentIdx] = useState(0);
   const [totalDue] = useState(due.length);
   const [showDetails, setShowDetails] = useState(false);
