@@ -952,7 +952,7 @@ function AddProblem({ data, persist, editingId, setEditingId, setView, showToast
   );
 }
 
-function ReviewQueue({ data, persist, stats }) {
+export function ReviewQueue({ data, persist, stats }) {
   const due = useMemo(
     () => [...stats.dueForReview].sort((a, b) => a.nextReview < b.nextReview ? -1 : a.nextReview > b.nextReview ? 1 : 0),
     [stats.dueForReview]
